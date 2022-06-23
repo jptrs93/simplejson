@@ -130,7 +130,7 @@ func (j *Json) GetAsFloat64(keyPath ...string) (float64, error) {
 	}
 }
 
-func (j Json) GetAsBool(keyPath ...string) (bool, error) {
+func (j *Json) GetAsBool(keyPath ...string) (bool, error) {
 	if val, err := j.Get(keyPath...); err != nil {
 		return false, err
 	} else {
@@ -138,7 +138,7 @@ func (j Json) GetAsBool(keyPath ...string) (bool, error) {
 	}
 }
 
-func (j Json) GetAsString(keyPath ...string) (string, error) {
+func (j *Json) GetAsString(keyPath ...string) (string, error) {
 	if val, err := j.Get(keyPath...); err != nil {
 		return "", err
 	} else {
@@ -164,6 +164,6 @@ func (j *Json) Keys() []string {
 	return keys
 }
 
-func (j Json) Bytes() []byte {
+func (j *Json) Bytes() []byte {
 	return (*j.bytes)[j.start : j.end+1]
 }
