@@ -5,29 +5,44 @@
 ## Example usage
 
 ```go
-import "github.com/jptrs93/sjson"
+package main
 
-data := []byte(`
+import (
+	"fmt"
+	"github.com/jptrs93/sjson"
+)
+
+var data = []byte(`
 {
 	"person": {
-  	"name": {
-    	"first": "Joe",
-    	"last": "Smith",
-    },
-  	"age": 29,
+		"name": {
+		"first": "Joe",
+		"last": "Smith",
+	},
+		"age": 29,
 		"emails" : ["doesnotexist@nowhere.com"]
 	}
 }
 `)
 
-func main() {
-  # load the json directly from some bytes
-  # alternatively use Parse(scanner) to read directly from any io.RuneScanner
-  json = ParseUTF8(data)
-  
-  
-  # get the item at path "person.name.first" as a string
-  firstName, err := json.GetAsString("person", "name", "first")
-  
-  
+// load the json directly from some bytes
+// alternatively use sjson.Parse(scanner) to read directly from any io.RuneScanner
+json, err := sjson.ParseUTF8(data)
+
+// get the json at path "person.emails"
+subjson, err := json.Get("person", "emails")
+
+subjson.IsArray() // test if the subjson is of type ARRAY
+
+// iterate for the items in the subjson array
+for _, item := range subjson.ArrayItems() {
+  strVal, err := item.AsString() // get the item as a string
 }
+
+// get the value at path "person.name.first" directly as a string
+firstName, err := json.GetAsString("person", "name", "first")
+
+// get the value at path "person.age" directly as a integer
+age, err := json.GetAsInt("person", "age")
+
+```
