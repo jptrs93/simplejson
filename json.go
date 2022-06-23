@@ -138,6 +138,14 @@ func (j Json) GetAsBool(keyPath ...string) (bool, error) {
 	}
 }
 
+func (j Json) GetAsString(keyPath ...string) (string, error) {
+	if val, err := j.Get(keyPath...); err != nil {
+		return "", err
+	} else {
+		return val.AsString()
+	}
+}
+
 func (j *Json) ArrayItems() []*Json {
 	return j.arrayItems
 }
