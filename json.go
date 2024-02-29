@@ -99,19 +99,23 @@ func (j *Json) AsBool() (bool, error) {
 }
 
 func (j *Json) AsInt() (int, error) {
-	if !j.IsNumber() {
-		return 0, NumberValueError
+	if j.IsNumber() {
+		return strconv.Atoi(string((*j.bytes)[j.start:j.end]))
+	} else if j.IsString() {
+		v, _ := j.AsString()
+		return strconv.Atoi(v)
 	}
-	r, err := strconv.Atoi(string((*j.bytes)[j.start:j.end]))
-	return r, err
+	return 0, NumberValueError
 }
 
 func (j *Json) AsFloat64() (float64, error) {
-	if !j.IsNumber() {
-		return 0, NumberValueError
+	if j.IsNumber() {
+		return strconv.ParseFloat(j.String(), 64)
+	} else if j.IsString() {
+		v, _ := j.AsString()
+		return strconv.ParseFloat(v, 64)
 	}
-	r, err := strconv.ParseFloat(string((*j.bytes)[j.start:j.end]), 64)
-	return r, err
+	return 0, NumberValueError
 }
 
 func (j *Json) GetAsInt(keyPath ...string) (int, error) {
@@ -165,5 +169,10 @@ func (j *Json) Keys() []string {
 }
 
 func (j *Json) Bytes() []byte {
-	return (*j.bytes)[j.start : j.end+1]
+	b := (*j.bytes)[j.start:j.end]
+	return b
+}
+
+func (j *Json) String() string {
+	return string(j.Bytes())
 }

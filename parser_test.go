@@ -1,6 +1,7 @@
 package sjson
 
 import (
+	"log"
 	"sort"
 	"testing"
 )
@@ -74,6 +75,18 @@ func TestParse_ValidMixedNested(t *testing.T) {
 		t.Errorf("Error (%v) parsing '%v' when none expected", err.Error(), json_str)
 	} else {
 		containsKeys(json, []string{"key1", "key2", "key3", "key4", "key5"}, t)
+	}
+}
+
+func TestString(t *testing.T) {
+	json_str := `{"key0":{"a":1},"key1":"stringVal","key2":1000,"key3":20.11,"key4":[{"key4.1":true,"key4.2":false,"key4.3":null}],"key5":{"key5.1":1}}`
+	json, err := Parse(&UTF8RuneScanner{bytes: []byte(json_str)})
+	if err != nil {
+		t.Errorf("Error (%v) parsing '%v' when none expected", err.Error(), json_str)
+	}
+	for _, k := range json.Keys() {
+		v, _ := json.Get(k)
+		log.Printf("%v", v)
 	}
 }
 
