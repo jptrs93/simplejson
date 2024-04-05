@@ -144,8 +144,16 @@ func moveToStringTokenEnd(r PositionalRuneScanner) error {
 	return nil
 }
 
+func isJSONNumberChar(c rune) bool {
+	switch c {
+	case '-', '+', 'e', 'E', '.':
+		return true
+	}
+	return c >= '0' && c <= '9'
+}
+
 func moveToNumberTokenEnd(prev rune, r PositionalRuneScanner) error {
-	dotCount := 0
+	//dotCount := 0
 	for {
 		c, _, err := r.ReadRune()
 		if err != nil {
@@ -154,15 +162,17 @@ func moveToNumberTokenEnd(prev rune, r PositionalRuneScanner) error {
 			}
 			return err
 		}
-		if !unicode.IsDigit(c) {
-			if c == '+' || c == '-' {
-				return ParseError(r.RunePos(), BadNumberTokenError)
-			} else if c == '.' {
-				if dotCount > 0 || !unicode.IsDigit(prev) {
-					return ParseError(r.RunePos(), BadNumberTokenError)
-				}
-				dotCount++
-			} else if !unicode.IsDigit(prev) {
+		if !isJSONNumberChar(c) {
+
+			//if c == '+' || c == '-' {
+			//	return ParseError(r.RunePos(), BadNumberTokenError)
+			//} else if c == '.' {
+			//	if dotCount > 0 || !unicode.IsDigit(prev) {
+			//		return ParseError(r.RunePos(), BadNumberTokenError)
+			//	}
+			//	dotCount++
+			//} else
+			if !unicode.IsDigit(prev) {
 				return ParseError(r.RunePos(), BadNumberTokenError)
 			} else {
 				break
